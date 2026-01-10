@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sopa de Letras - 50 Niveles</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Quicksand:wght@500;600&family=Nunito:wght@600;700&family=Comfortaa:wght@500;600&family=Fredoka:wght@500;600&family=Baloo+2:wght@500;600&family=Patrick+Hand&family=Caveat:wght@500;600&family=Pacifico&family=Righteous&family=Lobster&family=Satisfy&family=Dancing+Script:wght@500;600&family=Indie+Flower&family=Shadows+Into+Light&family=Amatic+SC:wght@700&family=Bangers&family=Permanent+Marker&family=Orbitron:wght@500;600&family=Press+Start+2P&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden;
+            touch-action: manipulation;
+            user-select: none;
+        }
+
+        .game-bg {
+            position: fixed;
+            inset: 0;
+            background-size: cover;
+            background-position: center;
+            z-index: -1;
+        }
+
+        .game-bg::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.4);
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .glass-dark {
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+        }
+
+        .screen {
+            display: none;
+            position: fixed;
+            inset: 0;
+            flex-direction: column;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        .grid-cell {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            text-transform: uppercase;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: transform 0.15s, background 0.15s;
+        }
+
+        .grid-cell.selected {
+            transform: scale(1.15);
+            z-index: 10;
+        }
+
+        #selectionCanvas {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        .word-item {
+            padding: 6px 14px;
+            margin: 3px;
+            border-radius: 20px;
+            font-size: 14px;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .word-item.found {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.4), rgba(59, 130, 246, 0.4));
+            text-decoration: line-through;
+            text-decoration-color: #fbbf24;
+            text-decoration-thickness: 3px;
+        }
+
+        @keyframes celebrate {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        .celebrate {
+            animation: celebrate 0.4s ease;
+        }
+
+        .level-btn {
+            aspect-ratio: 1;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 16px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .level-btn:not(.locked):hover {
+            transform: scale(1.1);
+        }
+
+        .level-btn.locked {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            padding: 20px;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal-box {
+            background: rgba(30, 30, 50, 0.95);
+            border-radius: 24px;
+            padding: 30px;
+            max-width: 350px;
+            width: 100%;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            pointer-events: none;
+            z-index: 200;
+        }
+
+        ::-webkit-scrollbar { width: 0; }
+
+        .font-1 { font-family: 'Poppins', sans-serif; }
+        .font-2 { font-family: 'Quicksand', sans-serif; }
+        .font-3 { font-family: 'Nunito', sans-serif; }
+        .font-4 { font-family: 'Comfortaa', cursive; }
+        .font-5 { font-family: 'Fredoka', sans-serif; }
+        .font-6 { font-family: 'Baloo 2', cursive; }
+        .font-7 { font-family: 'Patrick Hand', cursive; }
+        .font-8 { font-family: 'Caveat', cursive; }
+        .font-9 { font-family: 'Pacifico', cursive; }
+        .font-10 { font-family: 'Righteous', cursive; }
+        .font-11 { font-family: 'Lobster', cursive; }
+        .font-12 { font-family: 'Satisfy', cursive; }
+        .font-13 { font-family: 'Dancing Script', cursive; }
+        .font-14 { font-family: 'Indie Flower', cursive; }
+        .font-15 { font-family: 'Shadows Into Light', cursive; }
+        .font-16 { font-family: 'Amatic SC', cursive; }
+        .font-17 { font-family: 'Bangers', cursive; }
+        .font-18 { font-family: 'Permanent Marker', cursive; }
+        .font-19 { font-family: 'Orbitron', sans-serif; }
+        .font-20 { font-family: 'Press Start 2P', cursive; font-size: 0.7em; }
+    </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen overflow-hidden">
+    <div id="gameBg" class="game-bg"></div>
+
+    <!-- PANTALLA DE NIVELES -->
+    <div id="levelScreen" class="screen active">
+        <header class="glass-dark p-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-xl">🎮</div>
+                <div>
+                    <p class="font-semibold">Sopa de Letras</p>
+                    <p class="text-xs text-white/60">Nivel máximo: <span id="maxLevelText">1</span></p>
+                </div>
+            </div>
+            <button id="musicBtn" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-xl">🔇</button>
+        </header>
+
+        <main class="flex-1 overflow-y-auto p-4 pb-8">
+            <h2 class="text-xl font-bold mb-4 text-center bg-gradient-to-r from-yellow-400 via-pink-400 to-purple-400 bg-clip-text text-transparent">Selecciona un Nivel</h2>
+            <div id="levelsGrid" class="grid grid-cols-5 gap-2 max-w-sm mx-auto"></div>
+        </main>
+    </div>
+
+    <!-- PANTALLA DE JUEGO -->
+    <div id="gameScreen" class="screen">
+        <header class="glass-dark p-3 flex items-center justify-between">
+            <button id="backBtn" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+            </button>
+            <div class="text-center">
+                <p id="levelTitle" class="font-bold">Nivel 1</p>
+                <p id="levelTheme" class="text-xs text-white/60">Tema</p>
+            </div>
+            <button id="hintBtn" class="w-10 h-10 rounded-full bg-gradient-to-r from-yellow-500 to-orange-500 flex items-center justify-center text-xl">💡</button>
+        </header>
+
+        <div class="glass-dark mx-3 mt-2 p-3 rounded-2xl">
+            <div id="wordList" class="flex flex-wrap justify-center"></div>
+            <p class="text-center text-sm text-white/60 mt-2"><span id="foundCount">0</span>/<span id="totalCount">0</span> palabras</p>
+        </div>
+
+        <div class="flex-1 flex items-center justify-center p-3">
+            <div id="gridContainer" class="glass rounded-2xl p-3 w-full max-w-md aspect-square relative">
+                <canvas id="selectionCanvas"></canvas>
+                <div id="gameGrid" class="grid gap-1 h-full w-full relative z-10"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL NIVEL COMPLETADO -->
+    <div id="completeModal" class="modal-overlay">
+        <div class="modal-box">
+            <div class="text-5xl mb-4">🎉</div>
+            <h2 class="text-2xl font-bold mb-2">¡Nivel Completado!</h2>
+            <p class="text-white/60 mb-6">Has encontrado todas las palabras</p>
+            <div class="flex gap-3">
+                <button id="replayBtn" class="flex-1 py-3 bg-white/10 hover:bg-white/20 rounded-xl font-semibold transition">Repetir</button>
+                <button id="nextBtn" class="flex-1 py-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl font-semibold">Siguiente</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL PISTA -->
+    <div id="hintModal" class="modal-overlay">
+        <div class="modal-box">
+            <div class="text-5xl mb-4">💡</div>
+            <h2 class="text-xl font-bold mb-2">¿Necesitas una pista?</h2>
+            <p class="text-white/60 mb-6">Mira un anuncio para revelar una letra</p>
+            <button id="watchAdBtn" class="w-full py-3 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl font-semibold mb-3">▶ Ver Anuncio</button>
+            <button id="cancelHintBtn" class="w-full py-3 bg-white/10 hover:bg-white/20 rounded-xl font-semibold transition">Cancelar</button>
+            <div id="adLoading" class="hidden mt-4">
+                <div class="w-8 h-8 border-3 border-white/30 border-t-white rounded-full animate-spin mx-auto mb-2"></div>
+                <p class="text-xs text-white/40">Cargando anuncio...</p>
+            </div>
+        </div>
+    </div>
+
+    <audio id="bgMusic" loop>
+        <source src="https://assets.mixkit.co/music/preview/mixkit-serene-view-443.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        // ============ DATOS DEL JUEGO ============
+        const levels = [
+            { theme: "Animales", words: ["GATO", "PERRO", "PEZ", "AVE"], size: 7 },
+            { theme: "Colores", words: ["ROJO", "AZUL", "VERDE", "ROSA"], size: 7 },
+            { theme: "Números", words: ["UNO", "DOS", "TRES", "DIEZ"], size: 7 },
+            { theme: "Familia", words: ["MAMA", "PAPA", "HIJO", "TIA"], size: 7 },
+            { theme: "Frutas", words: ["PERA", "UVA", "KIWI", "LIMA"], size: 7 },
+            { theme: "Comida", words: ["PAN", "QUESO", "LECHE", "HUEVO", "ARROZ"], size: 8 },
+            { theme: "Cuerpo", words: ["MANO", "PIE", "OJO", "NARIZ", "BOCA"], size: 8 },
+            { theme: "Casa", words: ["SALA", "COCINA", "CAMA", "MESA", "SILLA"], size: 8 },
+            { theme: "Naturaleza", words: ["SOL", "LUNA", "ARBOL", "FLOR", "RIO"], size: 8 },
+            { theme: "Escuela", words: ["LIBRO", "LAPIZ", "MESA", "CLASE", "PATIO"], size: 8 },
+            { theme: "Deportes", words: ["FUTBOL", "TENIS", "GOLF", "BOXEO", "JUDO", "SURF"], size: 9 },
+            { theme: "Ropa", words: ["FALDA", "CAMISA", "ZAPATO", "GORRO", "BOLSO"], size: 9 },
+            { theme: "Transporte", words: ["AUTO", "TREN", "AVION", "BARCO", "METRO", "MOTO"], size: 9 },
+            { theme: "Clima", words: ["LLUVIA", "NIEVE", "VIENTO", "SOL", "NUBE", "RAYO"], size: 9 },
+            { theme: "Instrumentos", words: ["PIANO", "FLAUTA", "TAMBOR", "VIOLIN", "ARPA"], size: 9 },
+            { theme: "Profesiones", words: ["DOCTOR", "PILOTO", "CHEF", "ACTOR", "PINTOR", "JUEZ"], size: 10 },
+            { theme: "Países", words: ["MEXICO", "PERU", "CHILE", "CUBA", "BRASIL", "PANAMA"], size: 10 },
+            { theme: "Salvajes", words: ["TIGRE", "LEON", "CEBRA", "JIRAFA", "MONO", "OSO"], size: 10 },
+            { theme: "Flores", words: ["ROSA", "TULIPAN", "GIRASOL", "LIRIO", "CLAVEL"], size: 10 },
+            { theme: "Verduras", words: ["TOMATE", "CEBOLLA", "PAPA", "LECHUGA", "MAIZ"], size: 10 },
+            { theme: "Espacio", words: ["PLANETA", "ESTRELLA", "LUNA", "SOL", "GALAXIA", "COMETA"], size: 10 },
+            { theme: "Océano", words: ["BALLENA", "TIBURON", "PULPO", "CORAL", "MEDUSA", "DELFIN"], size: 10 },
+            { theme: "Cocina", words: ["SARTEN", "OLLA", "CUCHILLO", "TENEDOR", "PLATO", "VASO"], size: 10 },
+            { theme: "Tecnología", words: ["CELULAR", "LAPTOP", "TABLET", "MOUSE", "TECLADO"], size: 10 },
+            { theme: "Música", words: ["ROCK", "JAZZ", "SALSA", "REGGAE", "CUMBIA", "POP"], size: 10 },
+            { theme: "Geografía", words: ["MONTANA", "OCEANO", "DESIERTO", "VOLCAN", "ISLA", "LAGO", "SELVA"], size: 11 },
+            { theme: "Historia", words: ["IMPERIO", "FARAON", "PIRAMIDE", "CASTILLO", "CORONA", "ESPADA"], size: 11 },
+            { theme: "Ciencia", words: ["ATOMO", "CELULA", "ENERGIA", "QUIMICA", "FISICA", "ADN"], size: 11 },
+            { theme: "Arte", words: ["PINTURA", "ESCULTURA", "MUSEO", "LIENZO", "PINCEL", "PALETA"], size: 11 },
+            { theme: "Literatura", words: ["NOVELA", "POEMA", "CUENTO", "FABULA", "AUTOR", "POETA"], size: 11 },
+            { theme: "Arquitectura", words: ["EDIFICIO", "COLUMNA", "ARCO", "CUPULA", "FACHADA", "BALCON"], size: 11 },
+            { theme: "Medicina", words: ["HOSPITAL", "MEDICINA", "VACUNA", "FARMACIA", "CLINICA", "SALUD"], size: 11 },
+            { theme: "Gastronomía", words: ["RECETA", "SABOR", "AROMA", "GOURMET", "MENU", "CHEF"], size: 11 },
+            { theme: "Moda", words: ["VESTIDO", "ELEGANTE", "PASARELA", "MODELO", "ESTILO", "TELA"], size: 11 },
+            { theme: "Cine", words: ["PELICULA", "DIRECTOR", "ACTRIZ", "GUION", "ESCENA", "CAMARA"], size: 11 },
+            { theme: "Filosofía", words: ["RAZON", "LOGICA", "ETICA", "MORAL", "VIRTUD", "VERDAD", "IDEA"], size: 12 },
+            { theme: "Economía", words: ["MERCADO", "CAPITAL", "EMPRESA", "COMERCIO", "AHORRO", "BANCO"], size: 12 },
+            { theme: "Política", words: ["GOBIERNO", "CONGRESO", "SENADO", "PARTIDO", "LEY", "PODER", "VOTO"], size: 12 },
+            { theme: "Psicología", words: ["MENTE", "CONDUCTA", "EMOCION", "MEMORIA", "TERAPIA", "TRAUMA"], size: 12 },
+            { theme: "Astronomía", words: ["UNIVERSO", "TELESCOPIO", "SATELITE", "ORBITA", "NEBULOSA", "ECLIPSE"], size: 12 },
+            { theme: "Mitología", words: ["ZEUS", "HERCULES", "ATENEA", "POSEIDON", "HADES", "APOLO", "OLIMPO"], size: 12 },
+            { theme: "Biología", words: ["ARRECIFE", "PLANCTON", "MOLUSCO", "OCEANO", "FAUNA", "FLORA", "MAREA"], size: 12 },
+            { theme: "Renacimiento", words: ["DAVINCI", "MIGUEL", "ANGEL", "RAFAEL", "FLORENCIA", "VENECIA"], size: 12 },
+            { theme: "Clásica", words: ["SINFONIA", "CONCIERTO", "ORQUESTA", "SOPRANO", "OPERA", "SONATA"], size: 12 },
+            { theme: "Química", words: ["ELEMENTO", "COMPUESTO", "REACCION", "SOLUCION", "ACIDO", "BASE", "ENLACE"], size: 13 },
+            { theme: "Ingeniería", words: ["ESTRUCTURA", "CIRCUITO", "SISTEMA", "PROYECTO", "CALCULO", "MOTOR"], size: 13 },
+            { theme: "Neurociencia", words: ["CEREBRO", "NEURONA", "SINAPSIS", "CORTEZA", "AXON", "HORMONA"], size: 13 },
+            { theme: "Arqueología", words: ["EXCAVACION", "FOSIL", "RELIQUIA", "RUINAS", "TUMBA", "MOMIA", "PAPIRO"], size: 13 },
+            { theme: "Derecho", words: ["TRIBUNAL", "ABOGADO", "SENTENCIA", "DEMANDA", "JURADO", "FISCAL", "LEY"], size: 13 },
+            { theme: "Gran Final", words: ["MAGNIFICO", "INCREIBLE", "FANTASTICO", "ASOMBROSO", "BRILLANTE", "GENIAL", "EPICO"], size: 14 }
+        ];
+
+        const backgrounds = [
+            'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800',
+            'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800',
+            'https://images.unsplash.com/photo-1501854140801-50d01698950b?w=800',
+            'https://images.unsplash.com/photo-1433086966358-54859d0ed716?w=800',
+            'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800',
+            'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800',
+            'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800',
+            'https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=800'
+        ];
+
+        // ============ ESTADO ============
+        let currentLevel = 1;
+        let maxLevel = 1;
+        let foundWords = [];
+        let grid = [];
+        let gridSize = 8;
+        let selectedCells = [];
+        let isSelecting = false;
+        let placedWords = [];
+        let musicOn = false;
+
+        // ============ ELEMENTOS ============
+        const $ = id => document.getElementById(id);
+        const levelScreen = $('levelScreen');
+        const gameScreen = $('gameScreen');
+        const gameBg = $('gameBg');
+        const levelsGrid = $('levelsGrid');
+        const gameGrid = $('gameGrid');
+        const wordList = $('wordList');
+        const canvas = $('selectionCanvas');
+        const ctx = canvas.getContext('2d');
+        const bgMusic = $('bgMusic');
+
+        // ============ INICIALIZAR ============
+        function init() {
+            loadProgress();
+            setBackground();
+            renderLevels();
+            setupEvents();
+        }
+
+        function setBackground() {
+            const bg = backgrounds[Math.floor(Math.random() * backgrounds.length)];
+            gameBg.style.backgroundImage = `url(${bg})`;
+        }
+
+        function loadProgress() {
+            const saved = localStorage.getItem('sopaMaxLevel');
+            if (saved) maxLevel = parseInt(saved) || 1;
+            $('maxLevelText').textContent = maxLevel;
+        }
+
+        function saveProgress() {
+            localStorage.setItem('sopaMaxLevel', maxLevel.toString());
+            $('maxLevelText').textContent = maxLevel;
+        }
+
+        // ============ PANTALLAS ============
+        function showLevels() {
+            gameScreen.classList.remove('active');
+            levelScreen.classList.add('active');
+            setBackground();
+        }
+
+        function showGame() {
+            levelScreen.classList.remove('active');
+            gameScreen.classList.add('active');
+        }
+
+        // ============ NIVELES ============
+        function renderLevels() {
+            levelsGrid.innerHTML = '';
+            for (let i = 1; i <= 50; i++) {
+                const btn = document.createElement('button');
+                const locked = i > maxLevel;
+                const completed = i < maxLevel;
+                
+                btn.className = `level-btn ${locked ? 'locked bg-gray-700' : completed ? 'bg-gradient-to-br from-green-500 to-emerald-600' : 'bg-gradient-to-br from-purple-500 to-pink-500'} text-white`;
+                
+                if (locked) {
+                    btn.innerHTML = '🔒';
+                } else {
+                    btn.textContent = i;
+                    btn.onclick = () => startLevel(i);
+                }
+                
+                levelsGrid.appendChild(btn);
+            }
+        }
+
+        // ============ JUEGO ============
+        function startLevel(level) {
+            currentLevel = level;
+            foundWords = [];
+            selectedCells = [];
+            placedWords = [];
+            
+            const data = levels[level - 1];
+            gridSize = data.size;
+            
+            $('levelTitle').textContent = `Nivel ${level}`;
+            $('levelTheme').textContent = data.theme;
+            
+            // Cambiar fuente según nivel
+            const fontNum = ((level - 1) % 20) + 1;
+            gameGrid.className = `grid gap-1 h-full w-full relative z-10 font-${fontNum}`;
+            wordList.className = `flex flex-wrap justify-center font-${fontNum}`;
+            
+            generateGrid(data.words);
+            renderWords(data.words);
+            showGame();
+            resizeCanvas();
+            
+            if (musicOn) bgMusic.play().catch(() => {});
+        }
+
+        function generateGrid(words) {
+            grid = Array(gridSize).fill(null).map(() => Array(gridSize).fill(''));
+            placedWords = [];
+            
+            const sorted = [...words].sort((a, b) => b.length - a.length);
+            sorted.forEach(word => placeWord(word));
+            
+            const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            for (let i = 0; i < gridSize; i++) {
+                for (let j = 0; j < gridSize; j++) {
+                    if (!grid[i][j]) {
+                        grid[i][j] = letters[Math.floor(Math.random() * 26)];
+                    }
+                }
+            }
+            
+            renderGrid();
+        }
+
+        function placeWord(word) {
+            const dirs = [[0,1],[1,0],[1,1],[1,-1],[-1,1],[-1,-1],[0,-1],[-1,0]];
+            
+            for (let a = 0; a < 100; a++) {
+                const d = dirs[Math.floor(Math.random() * 8)];
+                const r = Math.floor(Math.random() * gridSize);
+                const c = Math.floor(Math.random() * gridSize);
+                
+                if (canPlace(word, r, c, d)) {
+                    const cells = [];
+                    for (let i = 0; i < word.length; i++) {
+                        const nr = r + i * d[0];
+                        const nc = c + i * d[1];
+                        grid[nr][nc] = word[i];
+                        cells.push({ row: nr, col: nc });
+                    }
+                    placedWords.push({ word, cells });
+                    return;
+                }
+            }
+        }
+
+        function canPlace(word, r, c, d) {
+            for (let i = 0; i < word.length; i++) {
+                const nr = r + i * d[0];
+                const nc = c + i * d[1];
+                if (nr < 0 || nr >= gridSize || nc < 0 || nc >= gridSize) return false;
+                if (grid[nr][nc] && grid[nr][nc] !== word[i]) return false;
+            }
+            return true;
+        }
+
+        function renderGrid() {
+            gameGrid.innerHTML = '';
+            gameGrid.style.gridTemplateColumns = `repeat(${gridSize}, 1fr)`;
+            
+            const fontSize = Math.max(10, 24 - gridSize);
+            
+            for (let i = 0; i < gridSize; i++) {
+                for (let j = 0; j < gridSize; j++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'grid-cell bg-white/20 text-white';
+                    cell.style.fontSize = `${fontSize}px`;
+                    cell.textContent = grid[i][j];
+                    cell.dataset.row = i;
+                    cell.dataset.col = j;
+                    gameGrid.appendChild(cell);
+                }
+            }
+        }
+
+        function renderWords(words) {
+            wordList.innerHTML = '';
+            words.forEach(word => {
+                const span = document.createElement('span');
+                span.className = 'word-item text-white/80';
+                span.textContent = word;
+                span.id = `w-${word}`;
+                wordList.appendChild(span);
+            });
+            $('foundCount').textContent = '0';
+            $('totalCount').textContent = words.length;
+        }
+
+        // ============ INTERACCIÓN ============
+        function setupEvents() {
+            // Navegación
+            $('backBtn').onclick = showLevels;
+            $('musicBtn').onclick = toggleMusic;
+            
+            // Modales
+            $('hintBtn').onclick = () => $('hintModal').classList.add('show');
+            $('cancelHintBtn').onclick = () => $('hintModal').classList.remove('show');
+            $('watchAdBtn').onclick = watchAd;
+            
+            $('replayBtn').onclick = () => {
+                $('completeModal').classList.remove('show');
+                startLevel(currentLevel);
+            };
+            
+            $('nextBtn').onclick = () => {
+                $('completeModal').classList.remove('show');
+                if (currentLevel < 50) startLevel(currentLevel + 1);
+                else showLevels();
+            };
+            
+            // Interacción con grid
+            gameGrid.addEventListener('mousedown', startSelect);
+            gameGrid.addEventListener('touchstart', startSelect, { passive: false });
+            document.addEventListener('mousemove', continueSelect);
+            document.addEventListener('touchmove', continueSelect, { passive: false });
+            document.addEventListener('mouseup', endSelect);
+            document.addEventListener('touchend', endSelect);
+            
+            window.addEventListener('resize', resizeCanvas);
+        }
+
+        function startSelect(e) {
+            e.preventDefault();
+            const cell = e.target.closest('.grid-cell');
+            if (!cell) return;
+            
+            isSelecting = true;
+            selectedCells = [];
+            addCell(cell);
+        }
+
+        function continueSelect(e) {
+            if (!isSelecting) return;
+            e.preventDefault();
+            
+            let target;
+            if (e.touches) {
+                const touch = e.touches[0];
+                target = document.elementFromPoint(touch.clientX, touch.clientY);
+            } else {
+                target = e.target;
+            }
+            
+            const cell = target?.closest('.grid-cell');
+            if (cell && !selectedCells.includes(cell) && isValidNext(cell)) {
+                addCell(cell);
+            }
+            drawLine();
+        }
+
+        function endSelect() {
+            if (!isSelecting) return;
+            isSelecting = false;
+            checkWord();
+            clearSelect();
+        }
+
+        function addCell(cell) {
+            selectedCells.push(cell);
+            cell.classList.add('selected');
+            cell.style.background = 'rgba(168, 85, 247, 0.7)';
+        }
+
+        function isValidNext(cell) {
+            if (selectedCells.length === 0) return true;
+            
+            const last = selectedCells[selectedCells.length - 1];
+            const lr = parseInt(last.dataset.row);
+            const lc = parseInt(last.dataset.col);
+            const nr = parseInt(cell.dataset.row);
+            const nc = parseInt(cell.dataset.col);
+            
+            if (Math.abs(nr - lr) > 1 || Math.abs(nc - lc) > 1) return false;
+            
+            if (selectedCells.length > 1) {
+                const first = selectedCells[0];
+                const fr = parseInt(first.dataset.row);
+                const fc = parseInt(first.dataset.col);
+                
+                const expDr = Math.sign(lr - fr);
+                const expDc = Math.sign(lc - fc);
+                const newDr = Math.sign(nr - lr);
+                const newDc = Math.sign(nc - lc);
+                
+                if (expDr !== 0 && newDr !== expDr) return false;
+                if (expDc !== 0 && newDc !== expDc) return false;
+                if (expDr === 0 && newDr !== 0) return false;
+                if (expDc === 0 && newDc !== 0) return false;
+            }
+            
+            return true;
+        }
+
+        function clearSelect() {
+            selectedCells.forEach(cell => {
+                cell.classList.remove('selected');
+                if (!cell.classList.contains('found')) {
+                    cell.style.background = 'rgba(255, 255, 255, 0.2)';
+                }
+            });
+            selectedCells = [];
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function checkWord() {
+            const word = selectedCells.map(c => c.textContent).join('');
+            const rev = word.split('').reverse().join('');
+            const data = levels[currentLevel - 1];
+            
+            const found = data.words.find(w => (w === word || w === rev) && !foundWords.includes(w));
+            
+            if (found) {
+                foundWords.push(found);
+                
+                const item = $(`w-${found}`);
+                if (item) {
+                    item.classList.add('found', 'celebrate');
+                }
+                
+                const colors = ['rgba(239,68,68,0.5)', 'rgba(34,197,94,0.5)', 'rgba(59,130,246,0.5)', 'rgba(168,85,247,0.5)', 'rgba(236,72,153,0.5)', 'rgba(234,179,8,0.5)'];
+                const color = colors[foundWords.length % 6];
+                
+                selectedCells.forEach(cell => {
+                    cell.classList.add('found');
+                    cell.style.background = color;
+                });
+                
+                $('foundCount').textContent = foundWords.length;
+                
+                if (foundWords.length === data.words.length) {
+                    setTimeout(levelComplete, 500);
+                }
+            }
+        }
+
+        function drawLine() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            if (selectedCells.length < 2) return;
+            
+            const rect = canvas.getBoundingClientRect();
+            
+            ctx.beginPath();
+            ctx.lineWidth = Math.min(25, canvas.width / gridSize * 0.7);
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = 'rgba(168, 85, 247, 0.6)';
+            
+            selectedCells.forEach((cell, i) => {
+                const cr = cell.getBoundingClientRect();
+                const x = cr.left - rect.left + cr.width / 2;
+                const y = cr.top - rect.top + cr.height / 2;
+                
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            });
+            
+            ctx.stroke();
+        }
+
+        function resizeCanvas() {
+            const container = $('gridContainer');
+            canvas.width = container.offsetWidth;
+            canvas.height = container.offsetHeight;
+        }
+
+        // ============ COMPLETAR NIVEL ============
+        function levelComplete() {
+            confetti();
+            
+            if (currentLevel >= maxLevel && currentLevel < 50) {
+                maxLevel = currentLevel + 1;
+                saveProgress();
+                renderLevels();
+            }
+            
+            $('completeModal').classList.add('show');
+        }
+
+        function confetti() {
+            const colors = ['#ef4444', '#22c55e', '#3b82f6', '#a855f7', '#ec4899', '#eab308'];
+            for (let i = 0; i < 40; i++) {
+                setTimeout(() => {
+                    const el = document.createElement('div');
+                    el.className = 'confetti';
+                    el.style.left = Math.random() * 100 + 'vw';
+                    el.style.top = '-10px';
+                    el.style.background = colors[Math.floor(Math.random() * 6)];
+                    el.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                    document.body.appendChild(el);
+                    
+                    el.animate([
+                        { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
+                        { transform: `translateY(100vh) rotate(${Math.random() * 720}deg)`, opacity: 0 }
+                    ], { duration: 2000 + Math.random() * 1500, easing: 'ease-out' }).onfinish = () => el.remove();
+                }, i * 40);
+            }
+        }
+
+        // ============ PISTAS ============
+        function watchAd() {
+            const loading = $('adLoading');
+            loading.classList.remove('hidden');
+            
+            setTimeout(() => {
+                loading.classList.add('hidden');
+                $('hintModal').classList.remove('show');
+                giveHint();
+            }, 2000);
+        }
+
+        function giveHint() {
+            const data = levels[currentLevel - 1];
+            const unfound = data.words.find(w => !foundWords.includes(w));
+            
+            if (unfound) {
+                const pw = placedWords.find(p => p.word === unfound);
+                if (pw && pw.cells.length > 0) {
+                    const { row, col } = pw.cells[0];
+                    const cell = gameGrid.children[row * gridSize + col];
+                    
+                    cell.style.background = 'rgba(234, 179, 8, 0.8)';
+                    cell.style.boxShadow = '0 0 20px rgba(234, 179, 8, 0.8)';
+                    
+                    setTimeout(() => {
+                        if (!cell.classList.contains('found')) {
+                            cell.style.background = 'rgba(255, 255, 255, 0.2)';
+                            cell.style.boxShadow = '';
+                        }
+                    }, 3000);
+                }
+            }
+        }
+
+        // ============ MÚSICA ============
+        function toggleMusic() {
+            musicOn = !musicOn;
+            $('musicBtn').textContent = musicOn ? '🔊' : '🔇';
+            
+            if (musicOn) {
+                bgMusic.play().catch(() => {});
+            } else {
+                bgMusic.pause();
+            }
+        }
+
+        // ============ INICIO ============
+        init();
+    </script>
+</body>
+</html>
