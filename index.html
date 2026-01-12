@@ -8,7 +8,7 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Quicksand:wght@500;600&family=Nunito:wght@600;700&family=Comfortaa:wght@500;600&family=Fredoka:wght@500;600&family=Baloo+2:wght@500;600&family=Patrick+Hand&family=Caveat:wght@500;600&family=Pacifico&family=Righteous&family=Lobster&family=Satisfy&family=Dancing+Script:wght@500;600&family=Indie+Flower&family=Shadows+Into+Light&family=Amatic+SC:wght@700&family=Bangers&family=Permanent+Marker&family=Orbitron:wght@500;600&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700;800&family=Quicksand:wght@700&family=Nunito:wght@800&family=Comfortaa:wght@700&family=Fredoka:wght@600;700&family=Baloo+2:wght@700&family=Patrick+Hand&family=Caveat:wght@700&family=Pacifico&family=Righteous&family=Lobster&family=Satisfy&family=Dancing+Script:wght@700&family=Indie+Flower&family=Shadows+Into+Light&family=Amatic+SC:wght@700&family=Bangers&family=Permanent+Marker&family=Orbitron:wght@700&family=Press+Start+2P&family=Russo+One&family=Bungee&family=Alfa+Slab+One&family=Luckiest+Guy&family=Passion+One:wght@700&family=Titan+One&family=Lilita+One&family=Chewy&family=Fugaz+One&family=Lemon&family=Sigmar+One&family=Rubik+Mono+One&family=Black+Ops+One&family=Boogaloo&family=Creepster&family=Fascinate&family=Freckle+Face&family=Gorditas:wght@700&family=Holtwood+One+SC&family=Knewave&family=Modak&family=Monoton&family=Nabla&family=Neucha&family=Oleo+Script:wght@700&family=Rampart+One&family=Ribeye&family=Rye&family=Shrikhand&family=Sunshiney&display=swap" rel="stylesheet">
 
     <style>
         * {
@@ -31,26 +31,27 @@
             background-size: cover;
             background-position: center;
             z-index: -1;
+            transition: background-image 0.5s ease;
         }
 
         .game-bg::after {
             content: '';
             position: absolute;
             inset: 0;
-            background: rgba(0,0,0,0.4);
+            background: rgba(0,0,0,0.5);
         }
 
         .glass {
             background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.15);
         }
 
         .glass-dark {
             background: rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
         }
 
         .screen {
@@ -68,15 +69,19 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 600;
+            font-weight: 900;
             text-transform: uppercase;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
             transition: transform 0.15s, background 0.15s;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.9), 0 0 15px rgba(255,255,255,0.4);
+            background: rgba(255, 255, 255, 0.08);
+            color: #ffffff;
+            border: 1px solid rgba(255,255,255,0.1);
         }
 
         .grid-cell.selected {
-            transform: scale(1.15);
+            transform: scale(1.12);
             z-index: 10;
         }
 
@@ -89,15 +94,17 @@
 
         .word-item {
             padding: 6px 14px;
-            margin: 3px;
-            border-radius: 20px;
-            font-size: 14px;
+            margin: 4px;
+            border-radius: 25px;
+            font-size: 15px;
+            font-weight: 700;
             transition: all 0.3s;
-            position: relative;
+            background: rgba(255,255,255,0.1);
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
         }
 
         .word-item.found {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.4), rgba(59, 130, 246, 0.4));
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.6), rgba(59, 130, 246, 0.6));
             text-decoration: line-through;
             text-decoration-color: #fbbf24;
             text-decoration-thickness: 3px;
@@ -115,19 +122,19 @@
         .level-btn {
             aspect-ratio: 1;
             border-radius: 12px;
-            font-weight: 700;
-            font-size: 16px;
+            font-weight: 800;
             transition: transform 0.2s, box-shadow 0.2s;
             border: none;
             cursor: pointer;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
         }
 
         .level-btn:not(.locked):hover {
-            transform: scale(1.1);
+            transform: scale(1.08);
         }
 
         .level-btn.locked {
-            opacity: 0.5;
+            opacity: 0.4;
             cursor: not-allowed;
         }
 
@@ -135,7 +142,7 @@
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,0.6);
+            background: rgba(0,0,0,0.8);
             justify-content: center;
             align-items: center;
             z-index: 100;
@@ -147,13 +154,14 @@
         }
 
         .modal-box {
-            background: rgba(30, 30, 50, 0.95);
+            background: rgba(20, 20, 40, 0.95);
             border-radius: 24px;
             padding: 30px;
-            max-width: 350px;
+            max-width: 380px;
             width: 100%;
             text-align: center;
-            border: 1px solid rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
         }
 
         .confetti {
@@ -166,6 +174,41 @@
 
         ::-webkit-scrollbar { width: 0; }
 
+        /* Animación del título */
+        @keyframes titleGlow {
+            0%, 100% { text-shadow: 0 0 20px rgba(168, 85, 247, 0.8), 0 0 40px rgba(236, 72, 153, 0.6); }
+            50% { text-shadow: 0 0 30px rgba(236, 72, 153, 0.8), 0 0 60px rgba(168, 85, 247, 0.6); }
+        }
+
+        .title-glow {
+            animation: titleGlow 3s ease-in-out infinite;
+        }
+
+        /* Animación de los botones del menú */
+        @keyframes menuBtnPulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(168, 85, 247, 0.4); }
+            50% { box-shadow: 0 0 35px rgba(168, 85, 247, 0.7); }
+        }
+
+        .menu-btn {
+            animation: menuBtnPulse 2s ease-in-out infinite;
+        }
+
+        /* Font cards */
+        .font-card {
+            transition: all 0.3s ease;
+        }
+
+        .font-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .font-card.locked {
+            opacity: 0.5;
+            filter: grayscale(1);
+        }
+
+        /* 50 FUENTES ÚNICAS */
         .font-1 { font-family: 'Poppins', sans-serif; }
         .font-2 { font-family: 'Quicksand', sans-serif; }
         .font-3 { font-family: 'Nunito', sans-serif; }
@@ -185,34 +228,123 @@
         .font-17 { font-family: 'Bangers', cursive; }
         .font-18 { font-family: 'Permanent Marker', cursive; }
         .font-19 { font-family: 'Orbitron', sans-serif; }
-        .font-20 { font-family: 'Press Start 2P', cursive; font-size: 0.7em; }
+        .font-20 { font-family: 'Press Start 2P', cursive; }
+        .font-21 { font-family: 'Russo One', sans-serif; }
+        .font-22 { font-family: 'Bungee', cursive; }
+        .font-23 { font-family: 'Alfa Slab One', cursive; }
+        .font-24 { font-family: 'Luckiest Guy', cursive; }
+        .font-25 { font-family: 'Passion One', cursive; }
+        .font-26 { font-family: 'Titan One', cursive; }
+        .font-27 { font-family: 'Lilita One', cursive; }
+        .font-28 { font-family: 'Chewy', cursive; }
+        .font-29 { font-family: 'Fugaz One', cursive; }
+        .font-30 { font-family: 'Lemon', cursive; }
+        .font-31 { font-family: 'Sigmar One', cursive; }
+        .font-32 { font-family: 'Rubik Mono One', monospace; }
+        .font-33 { font-family: 'Black Ops One', cursive; }
+        .font-34 { font-family: 'Boogaloo', cursive; }
+        .font-35 { font-family: 'Creepster', cursive; }
+        .font-36 { font-family: 'Fascinate', cursive; }
+        .font-37 { font-family: 'Freckle Face', cursive; }
+        .font-38 { font-family: 'Gorditas', cursive; }
+        .font-39 { font-family: 'Holtwood One SC', serif; }
+        .font-40 { font-family: 'Knewave', cursive; }
+        .font-41 { font-family: 'Modak', cursive; }
+        .font-42 { font-family: 'Monoton', cursive; }
+        .font-43 { font-family: 'Nabla', cursive; }
+        .font-44 { font-family: 'Neucha', cursive; }
+        .font-45 { font-family: 'Oleo Script', cursive; }
+        .font-46 { font-family: 'Rampart One', cursive; }
+        .font-47 { font-family: 'Ribeye', cursive; }
+        .font-48 { font-family: 'Rye', cursive; }
+        .font-49 { font-family: 'Shrikhand', cursive; }
+        .font-50 { font-family: 'Sunshiney', cursive; }
     </style>
 </head>
 <body class="bg-gray-900 text-white min-h-screen overflow-hidden">
     <div id="gameBg" class="game-bg"></div>
 
-    <!-- PANTALLA DE NIVELES -->
-    <div id="levelScreen" class="screen active">
-        <header class="glass-dark p-4 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-xl">🎮</div>
-                <div>
-                    <p class="font-semibold">Sopa de Letras</p>
-                    <p class="text-xs text-white/60">Nivel máximo: <span id="maxLevelText">1</span></p>
-                </div>
+    <!-- ========== MENÚ PRINCIPAL ========== -->
+    <div id="menuScreen" class="screen active">
+        <div class="flex-1 flex flex-col items-center justify-center p-6">
+            <!-- Logo/Título -->
+            <div class="text-center mb-12">
+                <div class="text-6xl mb-4">🔤</div>
+                <h1 class="text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-purple-400 via-pink-400 to-yellow-400 bg-clip-text text-transparent title-glow mb-2">
+                    Sopa de Letras
+                </h1>
+                <p class="text-white/60 text-lg">50 Niveles · 50 Fuentes Únicas</p>
+            </div>
+
+            <!-- Botones del menú -->
+            <div class="flex flex-col gap-4 w-full max-w-xs">
+                <button id="playBtn" class="menu-btn w-full py-4 px-8 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 rounded-2xl font-bold text-xl transition-all flex items-center justify-center gap-3">
+                    <span class="text-2xl">▶</span> JUGAR
+                </button>
+                
+                <button id="fontsBtn" class="w-full py-4 px-8 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 rounded-2xl font-bold text-xl transition-all flex items-center justify-center gap-3 shadow-lg">
+                    <span class="text-2xl">🔠</span> MIS FUENTES
+                </button>
+                
+                <button id="exitBtn" class="w-full py-4 px-8 bg-white/10 hover:bg-white/20 rounded-2xl font-bold text-xl transition-all flex items-center justify-center gap-3 border border-white/20">
+                    <span class="text-2xl">🚪</span> SALIR
+                </button>
+            </div>
+
+            <!-- Estadísticas -->
+            <div class="mt-10 glass rounded-2xl px-6 py-4 text-center">
+                <p class="text-white/60 text-sm">Progreso</p>
+                <p class="text-2xl font-bold"><span id="menuMaxLevel">1</span>/50 Niveles</p>
+                <p class="text-white/50 text-xs mt-1"><span id="menuFontsUnlocked">0</span> fuentes desbloqueadas</p>
+            </div>
+        </div>
+
+        <!-- Música toggle -->
+        <div class="absolute top-4 right-4">
+            <button id="musicBtnMenu" class="w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-2xl transition-all">🔇</button>
+        </div>
+    </div>
+
+    <!-- ========== PANTALLA DE NIVELES ========== -->
+    <div id="levelScreen" class="screen">
+        <header class="glass-dark p-3 flex items-center justify-between">
+            <button id="backToMenuBtn" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+            </button>
+            <div class="text-center">
+                <p class="font-bold text-lg">Selecciona Nivel</p>
+                <p class="text-xs text-white/60">Nivel máximo: <span id="maxLevelText">1</span></p>
             </div>
             <button id="musicBtn" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-xl">🔇</button>
         </header>
 
-        <main class="flex-1 overflow-y-auto p-4 pb-8">
-            <h2 class="text-xl font-bold mb-4 text-center bg-gradient-to-r from-yellow-400 via-pink-400 to-purple-400 bg-clip-text text-transparent">Selecciona un Nivel</h2>
-            <div id="levelsGrid" class="grid grid-cols-5 gap-2 max-w-sm mx-auto"></div>
+        <main class="flex-1 overflow-y-auto p-2">
+            <div id="levelsGrid" class="grid grid-cols-5 gap-2 w-full max-w-md mx-auto"></div>
         </main>
     </div>
 
-    <!-- PANTALLA DE JUEGO -->
-    <div id="gameScreen" class="screen">
+    <!-- ========== PANTALLA DE FUENTES ========== -->
+    <div id="fontsScreen" class="screen">
         <header class="glass-dark p-3 flex items-center justify-between">
+            <button id="backToMenuFromFonts" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+            </button>
+            <div class="text-center">
+                <p class="font-bold text-lg">🔠 Mis Fuentes</p>
+                <p class="text-xs text-white/60"><span id="fontsUnlockedCount">0</span>/50 desbloqueadas</p>
+            </div>
+            <div class="w-10"></div>
+        </header>
+
+        <main class="flex-1 overflow-y-auto p-3">
+            <p class="text-center text-white/60 text-sm mb-4">¡Completa niveles para desbloquear fuentes únicas!</p>
+            <div id="fontsGrid" class="grid grid-cols-2 gap-3 max-w-lg mx-auto"></div>
+        </main>
+    </div>
+
+    <!-- ========== PANTALLA DE JUEGO ========== -->
+    <div id="gameScreen" class="screen">
+        <header class="glass-dark p-2 flex items-center justify-between">
             <button id="backBtn" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
             </button>
@@ -223,43 +355,66 @@
             <button id="hintBtn" class="w-10 h-10 rounded-full bg-gradient-to-r from-yellow-500 to-orange-500 flex items-center justify-center text-xl">💡</button>
         </header>
 
-        <div class="glass-dark mx-3 mt-2 p-3 rounded-2xl">
+        <div class="glass-dark mx-2 mt-1 p-2 rounded-xl">
             <div id="wordList" class="flex flex-wrap justify-center"></div>
-            <p class="text-center text-sm text-white/60 mt-2"><span id="foundCount">0</span>/<span id="totalCount">0</span> palabras</p>
+            <p class="text-center text-xs text-white/50 mt-1"><span id="foundCount">0</span>/<span id="totalCount">0</span> palabras</p>
         </div>
 
-        <div class="flex-1 flex items-center justify-center p-3">
-            <div id="gridContainer" class="glass rounded-2xl p-3 w-full max-w-md aspect-square relative">
+        <div class="flex-1 flex items-center justify-center p-1">
+            <div id="gridContainer" class="glass rounded-xl p-1 w-[98vw] h-[60vh] max-w-[98vw] max-h-[60vh] relative mx-auto">
                 <canvas id="selectionCanvas"></canvas>
-                <div id="gameGrid" class="grid gap-1 h-full w-full relative z-10"></div>
+                <div id="gameGrid" class="grid gap-[1px] h-full w-full relative z-10"></div>
             </div>
         </div>
     </div>
 
-    <!-- MODAL NIVEL COMPLETADO -->
+    <!-- ========== MODAL NIVEL COMPLETADO ========== -->
     <div id="completeModal" class="modal-overlay">
         <div class="modal-box">
-            <div class="text-5xl mb-4">🎉</div>
+            <div class="text-6xl mb-4">🎉</div>
             <h2 class="text-2xl font-bold mb-2">¡Nivel Completado!</h2>
-            <p class="text-white/60 mb-6">Has encontrado todas las palabras</p>
+            <p class="text-white/60 mb-2">Has encontrado todas las palabras</p>
+            
+            <!-- Fuente desbloqueada -->
+            <div id="fontUnlockSection" class="bg-gradient-to-r from-amber-500/20 to-orange-500/20 rounded-xl p-4 mb-4 border border-amber-500/30">
+                <p class="text-amber-400 text-sm mb-2">🔓 ¡Nueva fuente desbloqueada!</p>
+                <p id="unlockedFontName" class="text-xl font-bold text-white"></p>
+                <p id="unlockedFontPreview" class="text-2xl mt-2 text-amber-300">ABCDEFG</p>
+            </div>
+            
             <div class="flex gap-3">
-                <button id="replayBtn" class="flex-1 py-3 bg-white/10 hover:bg-white/20 rounded-xl font-semibold transition">Repetir</button>
-                <button id="nextBtn" class="flex-1 py-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl font-semibold">Siguiente</button>
+                <button id="replayBtn" class="flex-1 py-3 bg-white/10 hover:bg-white/20 rounded-xl font-semibold transition">🔄 Repetir</button>
+                <button id="nextBtn" class="flex-1 py-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl font-semibold">Siguiente ▶</button>
             </div>
         </div>
     </div>
 
-    <!-- MODAL PISTA -->
+    <!-- ========== MODAL PISTA ========== -->
     <div id="hintModal" class="modal-overlay">
         <div class="modal-box">
             <div class="text-5xl mb-4">💡</div>
             <h2 class="text-xl font-bold mb-2">¿Necesitas una pista?</h2>
             <p class="text-white/60 mb-6">Mira un anuncio para revelar una letra</p>
-            <button id="watchAdBtn" class="w-full py-3 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl font-semibold mb-3">▶ Ver Anuncio</button>
+            <button id="watchAdBtn" class="w-full py-3 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl font-semibold mb-3 flex items-center justify-center gap-2">
+                <span>▶</span> Ver Anuncio
+            </button>
             <button id="cancelHintBtn" class="w-full py-3 bg-white/10 hover:bg-white/20 rounded-xl font-semibold transition">Cancelar</button>
             <div id="adLoading" class="hidden mt-4">
-                <div class="w-8 h-8 border-3 border-white/30 border-t-white rounded-full animate-spin mx-auto mb-2"></div>
-                <p class="text-xs text-white/40">Cargando anuncio...</p>
+                <div class="w-8 h-8 border-4 border-white/30 border-t-white rounded-full animate-spin mx-auto mb-2"></div>
+                <p class="text-xs text-white/50">Cargando anuncio...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== MODAL SALIR ========== -->
+    <div id="exitModal" class="modal-overlay">
+        <div class="modal-box">
+            <div class="text-5xl mb-4">👋</div>
+            <h2 class="text-xl font-bold mb-2">¿Salir del juego?</h2>
+            <p class="text-white/60 mb-6">Tu progreso está guardado</p>
+            <div class="flex gap-3">
+                <button id="cancelExitBtn" class="flex-1 py-3 bg-white/10 hover:bg-white/20 rounded-xl font-semibold transition">Cancelar</button>
+                <button id="confirmExitBtn" class="flex-1 py-3 bg-gradient-to-r from-red-500 to-pink-500 rounded-xl font-semibold">Salir</button>
             </div>
         </div>
     </div>
@@ -269,6 +424,60 @@
     </audio>
 
     <script>
+        // ============ DATOS DE FUENTES ============
+        const fontData = [
+            { name: "Poppins", family: "Poppins" },
+            { name: "Quicksand", family: "Quicksand" },
+            { name: "Nunito", family: "Nunito" },
+            { name: "Comfortaa", family: "Comfortaa" },
+            { name: "Fredoka", family: "Fredoka" },
+            { name: "Baloo 2", family: "Baloo 2" },
+            { name: "Patrick Hand", family: "Patrick Hand" },
+            { name: "Caveat", family: "Caveat" },
+            { name: "Pacifico", family: "Pacifico" },
+            { name: "Righteous", family: "Righteous" },
+            { name: "Lobster", family: "Lobster" },
+            { name: "Satisfy", family: "Satisfy" },
+            { name: "Dancing Script", family: "Dancing Script" },
+            { name: "Indie Flower", family: "Indie Flower" },
+            { name: "Shadows Into Light", family: "Shadows Into Light" },
+            { name: "Amatic SC", family: "Amatic SC" },
+            { name: "Bangers", family: "Bangers" },
+            { name: "Permanent Marker", family: "Permanent Marker" },
+            { name: "Orbitron", family: "Orbitron" },
+            { name: "Press Start 2P", family: "Press Start 2P" },
+            { name: "Russo One", family: "Russo One" },
+            { name: "Bungee", family: "Bungee" },
+            { name: "Alfa Slab One", family: "Alfa Slab One" },
+            { name: "Luckiest Guy", family: "Luckiest Guy" },
+            { name: "Passion One", family: "Passion One" },
+            { name: "Titan One", family: "Titan One" },
+            { name: "Lilita One", family: "Lilita One" },
+            { name: "Chewy", family: "Chewy" },
+            { name: "Fugaz One", family: "Fugaz One" },
+            { name: "Lemon", family: "Lemon" },
+            { name: "Sigmar One", family: "Sigmar One" },
+            { name: "Rubik Mono One", family: "Rubik Mono One" },
+            { name: "Black Ops One", family: "Black Ops One" },
+            { name: "Boogaloo", family: "Boogaloo" },
+            { name: "Creepster", family: "Creepster" },
+            { name: "Fascinate", family: "Fascinate" },
+            { name: "Freckle Face", family: "Freckle Face" },
+            { name: "Gorditas", family: "Gorditas" },
+            { name: "Holtwood One SC", family: "Holtwood One SC" },
+            { name: "Knewave", family: "Knewave" },
+            { name: "Modak", family: "Modak" },
+            { name: "Monoton", family: "Monoton" },
+            { name: "Nabla", family: "Nabla" },
+            { name: "Neucha", family: "Neucha" },
+            { name: "Oleo Script", family: "Oleo Script" },
+            { name: "Rampart One", family: "Rampart One" },
+            { name: "Ribeye", family: "Ribeye" },
+            { name: "Rye", family: "Rye" },
+            { name: "Shrikhand", family: "Shrikhand" },
+            { name: "Sunshiney", family: "Sunshiney" }
+        ];
+
         // ============ DATOS DEL JUEGO ============
         const levels = [
             { theme: "Animales", words: ["GATO", "PERRO", "PEZ", "AVE"], size: 7 },
@@ -331,7 +540,9 @@
             'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800',
             'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800',
             'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800',
-            'https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=800'
+            'https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=800',
+            'https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=800',
+            'https://images.unsplash.com/photo-1682687220742-aba13b6e50ba?w=800'
         ];
 
         // ============ ESTADO ============
@@ -344,11 +555,14 @@
         let isSelecting = false;
         let placedWords = [];
         let musicOn = false;
+        let unlockedFonts = [];
 
         // ============ ELEMENTOS ============
         const $ = id => document.getElementById(id);
+        const menuScreen = $('menuScreen');
         const levelScreen = $('levelScreen');
         const gameScreen = $('gameScreen');
+        const fontsScreen = $('fontsScreen');
         const gameBg = $('gameBg');
         const levelsGrid = $('levelsGrid');
         const gameGrid = $('gameGrid');
@@ -361,7 +575,7 @@
         function init() {
             loadProgress();
             setBackground();
-            renderLevels();
+            updateMenuStats();
             setupEvents();
         }
 
@@ -373,24 +587,54 @@
         function loadProgress() {
             const saved = localStorage.getItem('sopaMaxLevel');
             if (saved) maxLevel = parseInt(saved) || 1;
-            $('maxLevelText').textContent = maxLevel;
+            
+            const savedFonts = localStorage.getItem('sopaUnlockedFonts');
+            if (savedFonts) {
+                unlockedFonts = JSON.parse(savedFonts);
+            }
         }
 
         function saveProgress() {
             localStorage.setItem('sopaMaxLevel', maxLevel.toString());
+            localStorage.setItem('sopaUnlockedFonts', JSON.stringify(unlockedFonts));
+            updateMenuStats();
+        }
+
+        function updateMenuStats() {
+            $('menuMaxLevel').textContent = maxLevel;
+            $('menuFontsUnlocked').textContent = unlockedFonts.length;
             $('maxLevelText').textContent = maxLevel;
+            $('fontsUnlockedCount').textContent = unlockedFonts.length;
         }
 
         // ============ PANTALLAS ============
-        function showLevels() {
+        function showScreen(screen) {
+            menuScreen.classList.remove('active');
+            levelScreen.classList.remove('active');
             gameScreen.classList.remove('active');
-            levelScreen.classList.add('active');
+            fontsScreen.classList.remove('active');
+            screen.classList.add('active');
+        }
+
+        function showMenu() {
             setBackground();
+            updateMenuStats();
+            showScreen(menuScreen);
+        }
+
+        function showLevels() {
+            setBackground();
+            renderLevels();
+            showScreen(levelScreen);
+        }
+
+        function showFonts() {
+            renderFonts();
+            showScreen(fontsScreen);
         }
 
         function showGame() {
-            levelScreen.classList.remove('active');
-            gameScreen.classList.add('active');
+            showScreen(gameScreen);
         }
 
         // ============ NIVELES ============
@@ -401,7 +645,8 @@
                 const locked = i > maxLevel;
                 const completed = i < maxLevel;
                 
-                btn.className = `level-btn ${locked ? 'locked bg-gray-700' : completed ? 'bg-gradient-to-br from-green-500 to-emerald-600' : 'bg-gradient-to-br from-purple-500 to-pink-500'} text-white`;
+                btn.className = `level-btn ${locked ? 'locked bg-gray-700/50' : completed ? 'bg-gradient-to-br from-green-500 to-emerald-600' : 'bg-gradient-to-br from-purple-500 to-pink-500'} text-white`;
+                btn.style.fontSize = '1.3rem';
                 
                 if (locked) {
                     btn.innerHTML = '🔒';
@@ -412,6 +657,43 @@
                 
                 levelsGrid.appendChild(btn);
             }
+        }
+
+        // ============ FUENTES ============
+        function renderFonts() {
+            const grid = $('fontsGrid');
+            grid.innerHTML = '';
+            
+            fontData.forEach((font, index) => {
+                const level = index + 1;
+                const isUnlocked = unlockedFonts.includes(level);
+                
+                const card = document.createElement('div');
+                card.className = `font-card glass rounded-xl p-4 ${isUnlocked ? '' : 'locked'}`;
+                
+                card.innerHTML = `
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs bg-white/20 px-2 py-1 rounded-full">Nivel ${level}</span>
+                        <span class="text-lg">${isUnlocked ? '✅' : '🔒'}</span>
+                    </div>
+                    <p class="font-${level} text-xl mb-1" style="font-family: '${font.family}', cursive;">${font.name}</p>
+                    <p class="font-${level} text-2xl text-purple-300" style="font-family: '${font.family}', cursive;">ABC xyz</p>
+                    ${isUnlocked ? `
+                        <button onclick="downloadFont('${font.family}')" class="mt-3 w-full py-2 bg-gradient-to-r from-amber-500 to-orange-500 rounded-lg text-sm font-bold flex items-center justify-center gap-2 hover:from-amber-400 hover:to-orange-400 transition">
+                            ⬇️ Descargar
+                        </button>
+                    ` : `
+                        <p class="mt-3 text-xs text-white/40 text-center">Completa el nivel ${level} para desbloquear</p>
+                    `}
+                `;
+                
+                grid.appendChild(card);
+            });
+        }
+
+        function downloadFont(fontFamily) {
+            const fontUrl = `https://fonts.google.com/specimen/${fontFamily.replace(/ /g, '+')}`;
+            window.open(fontUrl, '_blank');
         }
 
         // ============ JUEGO ============
@@ -427,15 +709,15 @@
             $('levelTitle').textContent = `Nivel ${level}`;
             $('levelTheme').textContent = data.theme;
             
-            // Cambiar fuente según nivel
-            const fontNum = ((level - 1) % 20) + 1;
-            gameGrid.className = `grid gap-1 h-full w-full relative z-10 font-${fontNum}`;
-            wordList.className = `flex flex-wrap justify-center font-${fontNum}`;
+            // Fuente única para cada nivel
+            gameGrid.className = `grid gap-[1px] h-full w-full relative z-10 font-${level}`;
+            wordList.className = `flex flex-wrap justify-center font-${level}`;
             
             generateGrid(data.words);
             renderWords(data.words);
             showGame();
-            resizeCanvas();
+            
+            setTimeout(resizeCanvas, 100);
             
             if (musicOn) bgMusic.play().catch(() => {});
         }
@@ -495,12 +777,16 @@
             gameGrid.innerHTML = '';
             gameGrid.style.gridTemplateColumns = `repeat(${gridSize}, 1fr)`;
             
-            const fontSize = Math.max(10, 24 - gridSize);
+            const container = $('gridContainer');
+            const containerHeight = container.offsetHeight || window.innerHeight * 0.6;
+            const containerWidth = container.offsetWidth || window.innerWidth * 0.98;
+            const cellSize = Math.min(containerWidth, containerHeight) / gridSize;
+            const fontSize = Math.max(14, Math.floor(cellSize * 0.6));
             
             for (let i = 0; i < gridSize; i++) {
                 for (let j = 0; j < gridSize; j++) {
                     const cell = document.createElement('div');
-                    cell.className = 'grid-cell bg-white/20 text-white';
+                    cell.className = 'grid-cell';
                     cell.style.fontSize = `${fontSize}px`;
                     cell.textContent = grid[i][j];
                     cell.dataset.row = i;
@@ -514,7 +800,7 @@
             wordList.innerHTML = '';
             words.forEach(word => {
                 const span = document.createElement('span');
-                span.className = 'word-item text-white/80';
+                span.className = 'word-item text-white';
                 span.textContent = word;
                 span.id = `w-${word}`;
                 wordList.appendChild(span);
@@ -525,9 +811,25 @@
 
         // ============ INTERACCIÓN ============
         function setupEvents() {
+            // Menú principal
+            $('playBtn').onclick = showLevels;
+            $('fontsBtn').onclick = showFonts;
+            $('exitBtn').onclick = () => $('exitModal').classList.add('show');
+            $('cancelExitBtn').onclick = () => $('exitModal').classList.remove('show');
+            $('confirmExitBtn').onclick = () => {
+                $('exitModal').classList.remove('show');
+                // En una app real cerraría la aplicación
+                alert('¡Gracias por jugar! 👋');
+            };
+            
             // Navegación
+            $('backToMenuBtn').onclick = showMenu;
+            $('backToMenuFromFonts').onclick = showMenu;
             $('backBtn').onclick = showLevels;
+            
+            // Música
             $('musicBtn').onclick = toggleMusic;
+            $('musicBtnMenu').onclick = toggleMusic;
             
             // Modales
             $('hintBtn').onclick = () => $('hintModal').classList.add('show');
@@ -553,7 +855,12 @@
             document.addEventListener('mouseup', endSelect);
             document.addEventListener('touchend', endSelect);
             
-            window.addEventListener('resize', resizeCanvas);
+            window.addEventListener('resize', () => {
+                if (gameScreen.classList.contains('active')) {
+                    resizeCanvas();
+                    renderGrid();
+                }
+            });
         }
 
         function startSelect(e) {
@@ -595,7 +902,8 @@
         function addCell(cell) {
             selectedCells.push(cell);
             cell.classList.add('selected');
-            cell.style.background = 'rgba(168, 85, 247, 0.7)';
+            cell.style.background = 'rgba(168, 85, 247, 0.85)';
+            cell.style.color = '#fff';
         }
 
         function isValidNext(cell) {
@@ -632,7 +940,8 @@
             selectedCells.forEach(cell => {
                 cell.classList.remove('selected');
                 if (!cell.classList.contains('found')) {
-                    cell.style.background = 'rgba(255, 255, 255, 0.2)';
+                    cell.style.background = 'rgba(255, 255, 255, 0.08)';
+                    cell.style.color = '#ffffff';
                 }
             });
             selectedCells = [];
@@ -654,12 +963,20 @@
                     item.classList.add('found', 'celebrate');
                 }
                 
-                const colors = ['rgba(239,68,68,0.5)', 'rgba(34,197,94,0.5)', 'rgba(59,130,246,0.5)', 'rgba(168,85,247,0.5)', 'rgba(236,72,153,0.5)', 'rgba(234,179,8,0.5)'];
+                const colors = [
+                    'rgba(239,68,68,0.75)', 
+                    'rgba(34,197,94,0.75)', 
+                    'rgba(59,130,246,0.75)', 
+                    'rgba(168,85,247,0.75)', 
+                    'rgba(236,72,153,0.75)', 
+                    'rgba(234,179,8,0.75)'
+                ];
                 const color = colors[foundWords.length % 6];
                 
                 selectedCells.forEach(cell => {
                     cell.classList.add('found');
                     cell.style.background = color;
+                    cell.style.color = '#fff';
                 });
                 
                 $('foundCount').textContent = foundWords.length;
@@ -679,7 +996,7 @@
             ctx.beginPath();
             ctx.lineWidth = Math.min(25, canvas.width / gridSize * 0.7);
             ctx.lineCap = 'round';
-            ctx.strokeStyle = 'rgba(168, 85, 247, 0.6)';
+            ctx.strokeStyle = 'rgba(168, 85, 247, 0.5)';
             
             selectedCells.forEach((cell, i) => {
                 const cr = cell.getBoundingClientRect();
@@ -703,10 +1020,29 @@
         function levelComplete() {
             confetti();
             
+            // Desbloquear fuente del nivel
+            const fontWasNew = !unlockedFonts.includes(currentLevel);
+            if (fontWasNew) {
+                unlockedFonts.push(currentLevel);
+            }
+            
+            // Avanzar nivel máximo
             if (currentLevel >= maxLevel && currentLevel < 50) {
                 maxLevel = currentLevel + 1;
-                saveProgress();
-                renderLevels();
+            }
+            
+            saveProgress();
+            
+            // Mostrar info de fuente desbloqueada
+            const fontSection = $('fontUnlockSection');
+            if (fontWasNew) {
+                fontSection.style.display = 'block';
+                const font = fontData[currentLevel - 1];
+                $('unlockedFontName').textContent = font.name;
+                $('unlockedFontName').style.fontFamily = `'${font.family}', cursive`;
+                $('unlockedFontPreview').style.fontFamily = `'${font.family}', cursive`;
+            } else {
+                fontSection.style.display = 'none';
             }
             
             $('completeModal').classList.add('show');
@@ -714,7 +1050,7 @@
 
         function confetti() {
             const colors = ['#ef4444', '#22c55e', '#3b82f6', '#a855f7', '#ec4899', '#eab308'];
-            for (let i = 0; i < 40; i++) {
+            for (let i = 0; i < 60; i++) {
                 setTimeout(() => {
                     const el = document.createElement('div');
                     el.className = 'confetti';
@@ -722,13 +1058,15 @@
                     el.style.top = '-10px';
                     el.style.background = colors[Math.floor(Math.random() * 6)];
                     el.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                    el.style.width = (Math.random() * 12 + 6) + 'px';
+                    el.style.height = (Math.random() * 12 + 6) + 'px';
                     document.body.appendChild(el);
                     
                     el.animate([
                         { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
                         { transform: `translateY(100vh) rotate(${Math.random() * 720}deg)`, opacity: 0 }
-                    ], { duration: 2000 + Math.random() * 1500, easing: 'ease-out' }).onfinish = () => el.remove();
-                }, i * 40);
+                    ], { duration: 2500 + Math.random() * 1500, easing: 'ease-out' }).onfinish = () => el.remove();
+                }, i * 25);
             }
         }
 
@@ -737,6 +1075,7 @@
             const loading = $('adLoading');
             loading.classList.remove('hidden');
             
+            // Aquí irá la integración de AdMob
             setTimeout(() => {
                 loading.classList.add('hidden');
                 $('hintModal').classList.remove('show');
@@ -754,12 +1093,14 @@
                     const { row, col } = pw.cells[0];
                     const cell = gameGrid.children[row * gridSize + col];
                     
-                    cell.style.background = 'rgba(234, 179, 8, 0.8)';
-                    cell.style.boxShadow = '0 0 20px rgba(234, 179, 8, 0.8)';
+                    cell.style.background = 'rgba(234, 179, 8, 0.95)';
+                    cell.style.color = '#fff';
+                    cell.style.boxShadow = '0 0 25px rgba(234, 179, 8, 1)';
                     
                     setTimeout(() => {
                         if (!cell.classList.contains('found')) {
-                            cell.style.background = 'rgba(255, 255, 255, 0.2)';
+                            cell.style.background = 'rgba(255, 255, 255, 0.08)';
+                            cell.style.color = '#ffffff';
                             cell.style.boxShadow = '';
                         }
                     }, 3000);
@@ -770,7 +1111,9 @@
         // ============ MÚSICA ============
         function toggleMusic() {
             musicOn = !musicOn;
-            $('musicBtn').textContent = musicOn ? '🔊' : '🔇';
+            const icon = musicOn ? '🔊' : '🔇';
+            $('musicBtn').textContent = icon;
+            $('musicBtnMenu').textContent = icon;
             
             if (musicOn) {
                 bgMusic.play().catch(() => {});
